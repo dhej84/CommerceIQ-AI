@@ -1,16 +1,23 @@
+from pathlib import Path
+
+import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 
 class Recommender:
 
     def __init__(self, data_path="data.csv", top_n=5):
+        project_root = Path(__file__).resolve().parents[2]
+        data_file = Path(data_path)
 
-        self.data_path = data_path
+        if not data_file.is_absolute():
+            data_file = project_root / data_file
+
+        self.data_path = str(data_file)
         self.top_n = top_n
 
-        self.df = pd.read_csv(data_path)
+        self.df = pd.read_csv(self.data_path)
 
         self.df["recommendation_text"] = (
             self.df["title"].fillna("") + " " +
@@ -29,9 +36,9 @@ class Recommender:
             self.df["recommendation_text"]
         )
 
-        self.similarity = cosine_similarity(
-            self.tfidf_matrix
-        )
+        self.similarity = (
+            self.tfidf_matrix @ self.tfidf_matrix.T
+        ).toarray()
 
     def recommend(self, product_title):
 

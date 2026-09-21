@@ -23,6 +23,12 @@ env/
 *.json
 *.pkl
 *.pickle
+*.db
+*.sqlite
+*.sqlite3
+
+# Test artifacts
+.pytest_cache/
 
 # OS / editor
 .DS_Store
